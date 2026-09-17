@@ -18,6 +18,23 @@
   const keyBtn = $('keyBtn');
   const voiceSelect = $('voiceSelect');
   const btnCopy = $('btnCopy');
+  const themeToggle = $('themeToggle');
+
+  // ---------- Theme ----------
+  function applyTheme(theme){
+    const isLight = theme === 'light';
+    document.body.classList.toggle('light', isLight);
+    themeToggle.setAttribute('aria-pressed', String(isLight));
+    themeToggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+    try{ localStorage.setItem('morseVoiceTheme', isLight ? 'light' : 'dark'); }catch(e){}
+    drawScope();
+  }
+  let savedTheme = 'dark';
+  try{ savedTheme = localStorage.getItem('morseVoiceTheme') || 'dark'; }catch(e){}
+  applyTheme(savedTheme === 'light' ? 'light' : 'dark');
+  themeToggle.addEventListener('click', ()=>{
+    applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
+  });
 
   let audioCtx = null;
   function getCtx(){
@@ -43,7 +60,8 @@
     const w = scope.width = scope.clientWidth * dpr;
     const h = scope.height = scope.clientHeight * dpr;
     ctx.clearRect(0,0,w,h);
-    ctx.strokeStyle = '#E8A33D';
+    const styles = getComputedStyle(document.body);
+    ctx.strokeStyle = styles.getPropertyValue('--scope-line').trim() || '#6cf0c2';
     ctx.lineWidth = 2*dpr;
     ctx.beginPath();
     const step = w/history.length;
