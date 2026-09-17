@@ -284,7 +284,10 @@
   function applyTheme(theme){
     document.documentElement.setAttribute('data-theme', theme);
     themeToggle.textContent = theme === 'light' ? '☀' : '☾';
-    themeToggle.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
+    themeToggle.setAttribute(
+      'aria-label',
+      theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'
+    );
     themeToggle.title = theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode';
   }
 
