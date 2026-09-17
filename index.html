@@ -4,82 +4,138 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Morse ⇌ Voice</title>
-<meta name="description" content="Key in or type Morse code and hear it decoded to speech, live, in the browser.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2310242B'/%3E%3Ccircle cx='30' cy='50' r='10' fill='%23E8A33D'/%3E%3Crect x='50' y='42' width='30' height='16' rx='8' fill='%23E8A33D'/%3E%3C/svg%3E">
+<meta name="description" content="A modern Morse code to voice translator with live keying and audio playback.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230b0f14'/%3E%3Ccircle cx='29' cy='50' r='9' fill='%236cf0c2'/%3E%3Crect x='48' y='43' width='32' height='14' rx='7' fill='%236cf0c2'/%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="wrap">
+<div class="app-shell">
 
-  <div class="hero">
-    <button type="button" id="themeToggle" class="theme-toggle" aria-label="Switch to light mode" title="Switch theme">☾</button>
-    <div class="lamp-row">
-      <div class="lamp" id="lamp"></div>
-      <span class="lamp-label">signal</span>
-    </div>
-    <canvas id="scope"></canvas>
-    <div class="title-row">
-      <div class="brandmark" aria-hidden="true">
-        <span class="mark dot"></span>
-        <span class="mark dash"></span>
-        <span class="mark dot"></span>
+  <header class="topbar">
+    <a class="logo" href="#" aria-label="Morse Voice home">
+      <span class="logo-symbol"><i></i><b></b><i></i></span>
+      <span>MORSE<span class="logo-arrow">⇌</span>VOICE</span>
+    </a>
+    <div class="topbar-actions">
+      <div class="status">
+        <span class="status-dot" id="lamp"></span>
+        <span>LIVE SIGNAL</span>
       </div>
-      <h1>Morse ⇌ Voice</h1>
-      <p class="sub">Key in Morse code by hand or type it out — watch it cross the wire, then hear it read back in plain speech.</p>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to light mode" aria-pressed="false">
+        <span class="theme-icon sun">☼</span>
+        <span class="theme-track"><span class="theme-thumb"></span></span>
+        <span class="theme-icon moon">☾</span>
+      </button>
     </div>
-  </div>
+  </header>
 
-  <div class="switch" role="tablist">
-    <button type="button" id="tab-type" class="active" role="tab" aria-selected="true">Type it</button>
-    <button type="button" id="tab-key" role="tab" aria-selected="false">Key it live</button>
-  </div>
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">MORSE CODE TRANSLATOR</div>
+        <h1>Send a signal.<br><em>Hear the message.</em></h1>
+        <p>Type Morse or key it by hand. Decode it instantly, play the signal, and turn it into natural speech.</p>
+      </div>
+      <div class="signal-card">
+        <div class="signal-head">
+          <span>TRANSMISSION</span>
+          <span class="live-pill">● LIVE</span>
+        </div>
+        <canvas id="scope"></canvas>
+        <div class="signal-footer"><span>600 Hz</span><span>OSCILLOSCOPE</span></div>
+      </div>
+    </section>
 
-  <div class="panel" id="panel-type">
-    <textarea id="morseInput" placeholder="... --- ... / -.-. --.- / .. ..." spellcheck="false" aria-label="Morse code input"></textarea>
-    <div class="hint">Dot = <code>.</code> &nbsp;Dash = <code>-</code> &nbsp;Letter space = space &nbsp;Word break = <code>/</code></div>
-    <div class="row" style="margin-top:14px;">
-      <button type="button" class="btn" id="btnPlayMorse">▸ Play as code</button>
-      <button type="button" class="btn secondary" id="btnSpeakTyped">Speak translation</button>
-      <button type="button" class="btn ghost" id="btnClearType">Clear</button>
-    </div>
-  </div>
+    <section class="workspace">
+      <div class="mode-bar">
+        <div class="mode-tabs" role="tablist">
+          <button type="button" id="tab-type" class="active" role="tab" aria-selected="true">
+            <span class="tab-icon">⌨</span> Type Morse
+          </button>
+          <button type="button" id="tab-key" role="tab" aria-selected="false">
+            <span class="tab-icon">◉</span> Key it live
+          </button>
+        </div>
+        <div class="speed-control">
+          <span>Speed</span>
+          <strong id="wpmVal">12 WPM</strong>
+          <input type="range" id="wpm" min="5" max="30" value="12" aria-label="Send speed in words per minute">
+        </div>
+      </div>
 
-  <div class="panel" id="panel-key" style="display:none;">
-    <div class="key-area">
-      <button type="button" class="key-btn" id="keyBtn" aria-label="Hold to key Morse code">Hold to key<br><span style="font-size:12px;opacity:.7;">(or hold Space)</span></button>
-      <div class="key-hint">Short press = dot · long press = dash. Pause to let a letter land.</div>
-    </div>
-    <div class="row" style="margin-top:14px; justify-content:center;">
-      <button type="button" class="btn ghost" id="btnClearKey">Clear tape</button>
-      <label class="checkline"><input type="checkbox" id="autoSpeak"> Speak each word automatically</label>
-    </div>
-  </div>
+      <div class="input-panel" id="panel-type">
+        <div class="panel-top">
+          <div>
+            <div class="section-kicker">MORSE INPUT</div>
+            <div class="section-title">Write your transmission</div>
+          </div>
+          <span class="format-badge">. DOT &nbsp;—&nbsp; DASH</span>
+        </div>
+        <textarea id="morseInput" placeholder="... --- ... / .-- . .-.. -.-. --- -- ." spellcheck="false" aria-label="Morse code input"></textarea>
+        <div class="input-help">
+          <span>Space separates letters</span>
+          <span>/ separates words</span>
+        </div>
+        <div class="action-row">
+          <button type="button" class="btn primary" id="btnPlayMorse"><span>▶</span> Play signal</button>
+          <button type="button" class="btn secondary" id="btnSpeakTyped"><span>◖</span> Speak translation</button>
+          <button type="button" class="btn text-btn" id="btnClearType">Clear</button>
+        </div>
+      </div>
 
-  <div class="speed">
-    <div class="speed-label"><span>Send speed</span><span id="wpmVal">12 WPM</span></div>
-    <input type="range" id="wpm" min="5" max="30" value="12" aria-label="Send speed in words per minute">
-  </div>
+      <div class="input-panel live-panel" id="panel-key" style="display:none;">
+        <div class="panel-top">
+          <div>
+            <div class="section-kicker">LIVE KEYING</div>
+            <div class="section-title">Send Morse by hand</div>
+          </div>
+          <span class="format-badge">SPACEBAR ENABLED</span>
+        </div>
+        <div class="key-area">
+          <button type="button" class="key-btn" id="keyBtn" aria-label="Hold to key Morse code">
+            <span class="key-ring"></span>
+            <strong>HOLD TO SEND</strong>
+            <small>or hold Space</small>
+          </button>
+          <div class="key-hint"><b>Short press</b> dot <span>•</span> <b>Long press</b> dash <span>—</span></div>
+        </div>
+        <div class="live-options">
+          <button type="button" class="btn text-btn" id="btnClearKey">Clear transmission</button>
+          <label class="checkline"><input type="checkbox" id="autoSpeak"> <span>Speak each word</span></label>
+        </div>
+      </div>
 
-  <div class="ticker-wrap">
-    <div class="ticker-label-row">
-      <div class="ticker-label">Decoded</div>
-      <button type="button" class="btn ghost small" id="btnCopy">Copy</button>
-    </div>
-    <div class="ticker" id="ticker" aria-live="polite" aria-label="Decoded output"><span class="cursor"></span></div>
-  </div>
+      <div class="output-panel">
+        <div class="output-head">
+          <div>
+            <div class="section-kicker">DECODED MESSAGE</div>
+            <div class="section-title">Your message</div>
+          </div>
+          <button type="button" class="copy-btn" id="btnCopy">Copy</button>
+        </div>
+        <div class="ticker" id="ticker" aria-live="polite" aria-label="Decoded output">
+          <span class="placeholder">Waiting for a transmission...</span><span class="cursor"></span>
+        </div>
+        <div class="voice-row">
+          <div class="voice-select-wrap">
+            <span>VOICE</span>
+            <select id="voiceSelect" aria-label="Voice"></select>
+          </div>
+          <button type="button" class="btn primary speak-btn" id="btnSpeakNow"><span>▶</span> Speak message</button>
+        </div>
+      </div>
+    </section>
+  </main>
 
-  <div class="voice-row">
-    <select id="voiceSelect" aria-label="Voice"></select>
-    <button type="button" class="btn" id="btnSpeakNow">▸ Speak it</button>
-  </div>
-
-  <p class="footnote">Runs entirely in this tab — audio and speech never leave your browser.</p>
-
+  <footer>
+    <span>Runs locally in your browser</span>
+    <span class="footer-sep">•</span>
+    <span>Audio & speech stay on this device</span>
+  </footer>
 </div>
-
 <script src="script.js"></script>
 </body>
 </html>
