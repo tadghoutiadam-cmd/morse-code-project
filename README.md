@@ -2,7 +2,7 @@
 
 A self-contained web app that turns Morse code into spoken language — and back again. Type it out, or key it in live with real timing, and hear it two ways: as actual telegraph beeps, and read aloud in plain speech.
 
-
+**[Live demo →](https://claude.ai/artifact/VUqwPPaGUZeNoA4LMr3NkN)**
 
 ## Features
 
