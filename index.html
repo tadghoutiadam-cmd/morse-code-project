@@ -16,6 +16,7 @@
 
   <div class="hero">
     <button type="button" id="themeToggle" class="theme-toggle" aria-label="Switch to light mode" title="Switch theme">☾</button>
+    <div class="eyebrow">Browser telegraph · instant audio</div>
     <div class="lamp-row">
       <div class="lamp" id="lamp"></div>
       <span class="lamp-label">signal</span>
@@ -41,7 +42,7 @@
     <textarea id="morseInput" placeholder="... --- ... / -.-. --.- / .. ..." spellcheck="false" aria-label="Morse code input"></textarea>
     <div class="hint">Dot = <code>.</code> &nbsp;Dash = <code>-</code> &nbsp;Letter space = space &nbsp;Word break = <code>/</code></div>
     <div class="row" style="margin-top:14px;">
-      <button type="button" class="btn" id="btnPlayMorse">▸ Play as code</button>
+      <button type="button" class="btn" id="btnPlayMorse">Play signal</button>
       <button type="button" class="btn secondary" id="btnSpeakTyped">Speak translation</button>
       <button type="button" class="btn ghost" id="btnClearType">Clear</button>
     </div>
@@ -73,7 +74,7 @@
 
   <div class="voice-row">
     <select id="voiceSelect" aria-label="Voice"></select>
-    <button type="button" class="btn" id="btnSpeakNow">▸ Speak it</button>
+    <button type="button" class="btn" id="btnSpeakNow">Speak it</button>
   </div>
 
   <p class="footnote">Runs entirely in this tab — audio and speech never leave your browser.</p>
